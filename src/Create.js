@@ -1,58 +1,68 @@
-import { useState } from "react";
-import { useHistory } from "react-router-dom";
+import EditorJS from "@editorjs/editorjs";
+// Tools
+import Header from "@editorjs/header";
+import List from "@editorjs/list";
+import CheckList from "@editorjs/checklist";
+import ImageTool from "@editorjs/image";
+import Embed from "@editorjs/embed";
+import Table from "@editorjs/table";
+import Quote from "@editorjs/quote";
+import Marker from "@editorjs/marker";
+import CodeTool from "@editorjs/code";
+import Delimiter from "@editorjs/delimiter";
+import InlineCode from "@editorjs/inline-code";
+import LinkTool from "@editorjs/link";
+import Warning from "@editorjs/warning";
+import Attaches from "@editorjs/attaches";
+import Raw from "@editorjs/raw";
 
 const Create = () => {
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [author, setAuthor] = useState("");
-  const [isPending, setIsPending] = useState(false);
-  const history = useHistory();
+  const editor = new EditorJS({
+    holder: "editorjs",
+    tools: {
+      header: {
+        class: Header,
+        inlineToolbar: true,
+      },
+      list: List,
+      checkList: CheckList,
+      image: ImageTool,
+      embed: Embed,
+      table: Table,
+      quote: Quote,
+      marker: Marker,
+      codetool: CodeTool,
+      delimiter: Delimiter,
+      inlinecode: InlineCode,
+      linktool: LinkTool,
+      warning: Warning,
+      attaches: Attaches,
+      raw: Raw,
+    },
+    data: {
+      blocks: [
+        {
+          type: "header",
+          data: {
+            text: "New Heading",
+            level: 2,
+          },
+        },
+        {
+          type: "paragraph",
+          data: {
+            text: "Paragraph",
+          },
+        },
+      ],
+    },
+    onReady: () => {
+      console.log("Ready");
+    },
+    data: {},
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const blog = { title, body, author };
-
-    setIsPending(true);
-
-    fetch("http://localhost:8000/blogs", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(blog),
-    }).then(() => {
-      console.log("Blog added");
-      setIsPending(false);
-      history.push("/");
-    });
-  };
-
-  return (
-    <div className='create'>
-      <h2>Add new blog</h2>
-      <form onSubmit={handleSubmit}>
-        <label>Blog title:</label>
-        <input
-          type='text'
-          required
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <label>Blog body:</label>
-        <textarea
-          type='text'
-          required
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-        />
-        <label>Select author:</label>
-        <select value={author} onChange={(e) => setAuthor(e.target.value)}>
-          <option type='text'>Mario</option>
-          <option type='text'>Luigi</option>
-        </select>
-        {!isPending && <button>Add Blog</button>}
-        {isPending && <button disabled>Adding Blog...</button>}
-      </form>
-    </div>
-  );
+  return <div id="editorjs"></div>;
 };
 
 export default Create;
